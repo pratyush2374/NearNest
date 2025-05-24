@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import ForgotPassword from "./ForgotPassword";
 import { useRouter } from "next/navigation";
 import Gradient from "@/components/Gradient";
-import axios from "axios";
+import { signIn } from "next-auth/react";
 
 interface FormValues {
     email: string;
@@ -33,7 +33,23 @@ const SignIn: React.FC = () => {
     const router = useRouter();
 
     const onSubmit = async (data: FormValues) => {
-       
+        try {
+            const response = await signIn("credentials", {
+                redirect: false,
+                ...data,
+            });
+            if (response?.ok) {
+                toast.success("Signed in successfully!");
+                router.push("/dashboard");
+            } else {
+                toast.error(response?.error || "Invalid credentials!");
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessage =
+                (error as Error).message || "Something went wrong";
+            toast.error(errorMessage);
+        }
     };
 
     return (

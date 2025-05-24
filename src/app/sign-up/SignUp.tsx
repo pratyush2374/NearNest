@@ -16,6 +16,7 @@ import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Gradient from "@/components/Gradient";
+import { signIn } from "next-auth/react";
 
 interface FormValues {
     fullName: string;
@@ -34,7 +35,29 @@ const SignUp: React.FC = () => {
     const router = useRouter();
 
     const onSubmit = async (data: FormValues) => {
-        
+        try {
+            await axios.post("/api/sign-up", data);
+            toast.success("Account created successfully! Redirecting...");
+            const res = await signIn("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+            });
+
+            if (res?.ok) {
+                router.push("/feed");
+            } else {
+                router.push("/sign-in");
+            }
+        } catch (err) {
+            const error = err as AxiosError;
+            const errorMessage =
+                (error.response?.data as { message?: string })?.message ||
+                "Something went wrong";
+            toast.error(errorMessage);
+        } finally {
+            reset();
+        }
     };
 
     return (
