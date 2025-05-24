@@ -7,3 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  fullName     String
+  email        String     @unique
+  username     String     @unique
+  password     String
+  bio          String?
+  profilePic   String?
+  location     String?
+  posts        Post[]
+  isVerified   Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  comments     Comment[]
+  Reaction     Reaction[]
+}
+
+model Post {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  media     String[]
+  type      PostType   @default(LOCAL_UPDATE)
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String     @db.ObjectId
+  location  String
+  Reaction  Reaction[]
+  comments  Comment[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([createdAt, location])
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reaction {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  user      User         @relation(fields: [userId], references: [id])
+  userId    String       @db.ObjectId
+  post      Post         @relation(fields: [postId], references: [id])
+  postId    String       @db.ObjectId
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  @@unique([userId, postId])
+}
+
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
+enum PostType {
+  LOCAL_UPDATE
+  PLACE_RECOMMENDATION
+  HELP
+  EVENT_ANNOUNCEMENT
+}

@@ -1,7 +1,7 @@
 import ApiResponse from "@/lib/ApiResponse";
 import sendEmail from "@/lib/Emailer";
 import generateUniqueUsername from "@/lib/GenerateUniqueUsername";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
 import prisma from "@/lib/PrismaClient";
 import { NextRequest, NextResponse } from "next/server";
 import { generateToken } from "@/lib/JWT";
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
             <p>Thank you for signing up with NearNest. To verify your email address, please click the link below:</p>
             <p><a href="${verifyLink}">${verifyLink}</a></p> 
             <p>Best regards,<br>NearNest Team</p>
-        `
+        `;
 
         await sendEmail(
             email,

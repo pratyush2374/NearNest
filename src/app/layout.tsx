@@ -9,7 +9,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
     title: "NearNest - Discover & Share Local Events",
-    metadataBase: new URL("https://nearnest.vercel.app"),
+    metadataBase: new URL("https://nearnest-pratyush.vercel.app"),
     description:
         "NearNest is your local hub for discovering and sharing community events, gatherings, meetups, and seminars. Connect with people around you and stay in the loop.",
     keywords:

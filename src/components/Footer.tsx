@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                     <div className="pt-8 border-t border-blue-100/60">
                         <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
                             <p className="text-sm text-gray-500">
-                                © 2024 All rights reserved
+                                © 2025 All rights reserved
                             </p>
                             <div className="flex items-center justify-center space-x-6">
                                 {socialIcons.map((icon, index) => (
