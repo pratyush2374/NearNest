@@ -40,7 +40,7 @@ const SignIn: React.FC = () => {
             });
             if (response?.ok) {
                 toast.success("Signed in successfully!");
-                router.push("/dashboard");
+                router.push("/feed");
             } else {
                 toast.error(response?.error || "Invalid credentials!");
             }
