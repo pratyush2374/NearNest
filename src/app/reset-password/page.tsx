@@ -26,7 +26,7 @@ const ResetPasswordComponent = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(true);
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
     const password = watch("password");
@@ -69,15 +69,13 @@ const ResetPasswordComponent = () => {
                                     Password Reset Successful!
                                 </h1>
                                 <p className="text-muted-foreground">
-                                    Your password has been successfully updated.
                                     You can now log in with your new password.
                                 </p>
                             </div>
-                            <Link
-                                href="/sign-in"
-                                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors"
-                            >
-                                Continue to Login
+                            <Link href="/sign-in">
+                                <div className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors mt-4">
+                                    Continue to Login
+                                </div>
                             </Link>
                         </div>
                     </div>

@@ -49,8 +49,9 @@ const ForgotPassword: React.FC = () => {
                             Check your inbox
                         </h3>
                         <p className="text-muted-foreground text-sm">
-                            We&apos;ve sent you a password reset link. Please
-                            check your email to continue.
+                            We have emailed you instructions for setting your
+                            password, if an account exists with the email you
+                            entered. You should receive them shortly.
                         </p>
                     </div>
                 ) : (

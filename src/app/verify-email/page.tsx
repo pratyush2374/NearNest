@@ -90,10 +90,10 @@ const VerifyEmailComponent: React.FC = () => {
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
-                                href="/dashboard"
+                                href="/feed"
                                 className="inline-flex items-center justify-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200"
                             >
-                                <span>Continue to Dashboard</span>
+                                <span>Continue to Home</span>
                                 <ArrowRight className="w-4 h-4 ml-2" />
                             </Link>
                         </div>
@@ -124,10 +124,6 @@ const VerifyEmailComponent: React.FC = () => {
                                     • Check if the verification link has expired
                                 </li>
                                 <li>• Request a new verification email</li>
-                                <li>
-                                    • Contact our support team if the issue
-                                    persists
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -142,13 +138,9 @@ const VerifyEmailComponent: React.FC = () => {
         <div className="min-h-screen bg-background relative flex items-center justify-center p-4">
             <Gradient />
             <div className="w-full max-w-md mt-14">
-                
                 <div className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-lg">
                     {renderContent()}
                 </div>
-
-                
-                
             </div>
         </div>
     );
