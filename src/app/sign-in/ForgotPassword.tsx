@@ -18,7 +18,13 @@ const ForgotPassword: React.FC = () => {
     const [isSuccess, setIsSuccess] = useState(false);
 
     const onSubmit = async (data: { email: string }) => {
-        
+        try {
+            await axios.post("/api/forgot-password", data);
+            setIsSuccess(true);
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong, Re-try");
+        }
     };
 
     return (
