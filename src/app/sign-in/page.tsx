@@ -4,7 +4,7 @@ import SignIn from "./SignIn";
 
 export const metadata: Metadata = {
     title: "Sign In | NearNest - Discover & Share Local Events",
-    metadataBase: new URL("https://nearnest.vercel.app"),
+    metadataBase: new URL("https://nearnest-pratyush.vercel.app"),
     description:
         "Sign in to your NearNest account to explore and share local events, meetups, and community gatherings. Stay updated with what’s happening nearby.",
     keywords:

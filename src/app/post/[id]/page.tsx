@@ -3,7 +3,7 @@ import IndividualPost from "./IndividualPost";
 
 export const metadata: Metadata = {
     title: "Post | NearNest - Discover & Share Local Events",
-    metadataBase: new URL("https://nearnest.vercel.app"),
+    metadataBase: new URL("https://nearnest-pratyush.vercel.app"),
     description:
         "Explore this local post on NearNest. Stay connected with your community by discovering updates, events, and insights shared by people around you.",
     keywords:
