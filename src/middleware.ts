@@ -7,32 +7,36 @@ export async function middleware(request: NextRequest) {
         req: request,
         secret: process.env.NEXTAUTH_SECRET,
     });
-    const url = request.nextUrl;
 
+    const url = request.nextUrl;
+    const { pathname } = url;
 
     // Public routes that should be accessible without authentication
     const isPublicRoute =
-        url.pathname === "/" ||
-        url.pathname === "/sign-in" ||
-        url.pathname === "/sign-up" ||
-        url.pathname === "/reset-password" ||
-        url.pathname === "/verify-email";
+        pathname === "/" ||
+        pathname === "/sign-in" ||
+        pathname === "/sign-up" ||
+        pathname.startsWith("/reset-password") ||
+        pathname.startsWith("/verify-email");
 
     // Protected routes that require authentication
     const isProtectedRoute =
-        url.pathname === "/feed" ||
-        url.pathname.startsWith("/post/") ||
-        url.pathname === "/create-post" ||
-        url.pathname === "/profile";
+        pathname === "/feed" ||
+        pathname.startsWith("/post/") ||
+        pathname === "/create-post" ||
+        pathname === "/profile";
 
     // If user is authenticated and trying to access public routes,
-    // redirect them to the appropriate page
-    if (token && isPublicRoute) {
+    if (
+        token &&
+        isPublicRoute &&
+        !pathname.startsWith("/verify-email") &&
+        !pathname.startsWith("/reset-password")
+    ) {
         return NextResponse.redirect(new URL("/feed", request.url));
     }
 
     // If user is not authenticated and trying to access protected routes,
-    // redirect them to sign-in
     if (!token && isProtectedRoute) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
     }
@@ -46,8 +50,8 @@ export const config = {
         "/",
         "/sign-in",
         "/sign-up",
-        "/reset-password",
-        "/verify-email",
+        "/reset-password/:path*",
+        "/verify-email/:path*",
         "/feed",
         "/post/:path*",
         "/create-post",
