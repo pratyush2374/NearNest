@@ -102,7 +102,7 @@ const HeroSection: React.FC = () => {
                                     </span>
                                 </div>
                                 <p className="text-slate-600 text-sm">
-                                    Like, share, reply
+                                    Like and reply
                                 </p>
                             </div>
                         </div>
