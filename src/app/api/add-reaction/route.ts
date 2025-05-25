@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
                 }
             );
         }
-        const userId = "6831e74eb1ee71f43b4a17b0";
+        const userId = token.id;
         const { postId, reactionType } = await request.json();
 
         if (
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        await prisma.reaction.create({
+        const reaction = await prisma.reaction.create({
             data: {
                 user: {
                     connect: { id: userId },
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        return NextResponse.json(new ApiResponse(true, "Reaction added"), {
+        return NextResponse.json(new ApiResponse(true, "Reaction added", reaction), {
             status: 200,
         });
     } catch (error) {
