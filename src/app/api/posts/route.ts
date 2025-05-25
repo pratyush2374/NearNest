@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
             longitude,
             latitude,
             "BYRADIUS",
-            50,
+            500,
             "km",
             "WITHCOORD"
         );

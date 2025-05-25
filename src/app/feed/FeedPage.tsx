@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import Feed from "./Feed";
 import FeedNavbar from "./FeedNavbar";
 import { toast } from "sonner";
+import PostData from "@/types/post";
+import LoadingFeed from "./LoadingFeed";
+import CreatePost from "./CreatePost";
 
 const FeedPage: React.FC = () => {
     const [districtState, setDistrictState] = useState("");
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<PostData[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -33,7 +36,10 @@ const FeedPage: React.FC = () => {
                         setDistrictState(districtState);
                         setPosts(posts);
                         localStorage.setItem("districtState", districtState);
-                        localStorage.setItem("location", `${latitude},${longitude}`);
+                        localStorage.setItem(
+                            "location",
+                            `${latitude},${longitude}`
+                        );
                     } catch (err) {
                         const error = err as AxiosError;
                         console.error(error);
@@ -57,16 +63,25 @@ const FeedPage: React.FC = () => {
         fetchPostsWithLocation();
     }, []);
 
-    if (error) return <p className="text-red-500 text-center">{error}</p>;
-    if (isLoading)
+    if (error) {
         return (
-            <p className="text-center">Fetching your location and posts...</p>
+            <div className="max-w-2xl mx-auto p-6">
+                <div className="text-center py-12">
+                    <div className="text-red-500 mb-2">⚠️</div>
+                    <p className="text-gray-600">{error}</p>
+                </div>
+            </div>
         );
+    }
+    if (isLoading) return <LoadingFeed />;
 
     return (
         <>
             <FeedNavbar districtState={districtState} />
-            <Feed />
+            <div className="pt-16">
+                <CreatePost />
+                <Feed posts={posts} />
+            </div>
         </>
     );
 };
