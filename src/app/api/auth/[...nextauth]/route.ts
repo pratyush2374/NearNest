@@ -34,7 +34,7 @@ const handler = NextAuth({
                 if (!user) {
                     throw new Error("User not found");
                 }
-                
+
                 // Compare the hashed password in the database with the provided password
                 const isPasswordValid = await bcrypt.compare(
                     password,
@@ -60,7 +60,6 @@ const handler = NextAuth({
                 token.id = user.id;
                 token.fullName = user.fullName;
                 token.email = user.email;
-                token.profilePic = user.profilePic;
             }
             return token;
         },
@@ -70,7 +69,6 @@ const handler = NextAuth({
                 session.user.id = token.id;
                 session.user.fullName = token.fullName;
                 session.user.email = token.email;
-                session.user.profilePic = token.profilePic;
             }
             return session;
         },

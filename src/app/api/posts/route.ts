@@ -101,7 +101,6 @@ export async function POST(request: NextRequest) {
                     select: {
                         fullName: true,
                         username: true,
-                        profilePic: true,
                     },
                 },
                 reactions: {
@@ -110,7 +109,6 @@ export async function POST(request: NextRequest) {
                             select: {
                                 fullName: true,
                                 username: true,
-                                profilePic: true,
                             },
                         },
                     },
@@ -121,7 +119,6 @@ export async function POST(request: NextRequest) {
                             select: {
                                 fullName: true,
                                 username: true,
-                                profilePic: true,
                             },
                         },
                     },
@@ -132,12 +129,11 @@ export async function POST(request: NextRequest) {
             },
         });
 
-       
         return NextResponse.json(
             new ApiResponse(true, "Posts fetched successfully", {
                 location,
                 districtState,
-                posts : postData,
+                posts: postData,
             }),
             {
                 status: 200,

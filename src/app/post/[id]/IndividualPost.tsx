@@ -9,6 +9,7 @@ import {
     MapPin,
     Calendar,
     Heart,
+    ThumbsDown,
     MessageCircle,
     Clock,
     Users,
@@ -60,6 +61,10 @@ interface PostData {
     user: User;
     userId: string;
     location: string;
+    hasUserLikedPost: boolean;
+    hasUserDislikedPost: boolean;
+    totalLikes: number;
+    totalDislikes: number;
     createdAt: string;
     updatedAt: string;
     reactions: Reaction[];
@@ -102,6 +107,76 @@ const IndividualPost: React.FC = () => {
 
         fetchData();
     }, [params.id]);
+
+    const handleReaction = async (type: "LIKE" | "DISLIKE") => {
+        if (!postData) return;
+
+        try {
+            // Optimistic UI update
+            let newPostData = { ...postData };
+
+            if (type === "LIKE") {
+                if (postData.hasUserLikedPost) {
+                    // User is un-liking
+                    newPostData = {
+                        ...postData,
+                        hasUserLikedPost: false,
+                        totalLikes: postData.totalLikes - 1,
+                    };
+                } else {
+                    // User is liking
+                    newPostData = {
+                        ...postData,
+                        hasUserLikedPost: true,
+                        hasUserDislikedPost: false, // Remove dislike if it was there
+                        totalLikes: postData.totalLikes + 1,
+                        totalDislikes: postData.hasUserDislikedPost
+                            ? postData.totalDislikes - 1
+                            : postData.totalDislikes,
+                    };
+                }
+            } else {
+                // DISLIKE
+                if (postData.hasUserDislikedPost) {
+                    // User is un-disliking
+                    newPostData = {
+                        ...postData,
+                        hasUserDislikedPost: false,
+                        totalDislikes: postData.totalDislikes - 1,
+                    };
+                } else {
+                    // User is disliking
+                    newPostData = {
+                        ...postData,
+                        hasUserDislikedPost: true,
+                        hasUserLikedPost: false, // Remove like if it was there
+                        totalDislikes: postData.totalDislikes + 1,
+                        totalLikes: postData.hasUserLikedPost
+                            ? postData.totalLikes - 1
+                            : postData.totalLikes,
+                    };
+                }
+            }
+
+            // Update UI immediately
+            setPostData(newPostData);
+
+            // Make API call to persist the change
+            await axios.post("/api/add-reaction", {
+                postId: params.id,
+                type: type,
+            });
+        } catch (err) {
+            // Revert the optimistic update on error
+            setPostData(postData);
+
+            const error = err as AxiosError;
+            const errorMessage =
+                (error.response?.data as { message?: string })?.message ||
+                `Failed to ${type.toLowerCase()} post`;
+            toast.error(errorMessage);
+        }
+    };
 
     const onSubmitComment = async (data: CommentForm) => {
         setIsSubmitting(true);
@@ -280,16 +355,35 @@ const IndividualPost: React.FC = () => {
                         {/* Engagement Stats */}
                         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                             <div className="flex items-center gap-6">
-                                <button className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
+                                <button
+                                    onClick={() => handleReaction("LIKE")}
+                                    className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors"
+                                >
                                     <Heart
                                         className={`w-5 h-5 ${
-                                            postData.reactions.length > 0
-                                                ? "fill-red-500 text-red-500"
+                                            postData.hasUserLikedPost
+                                                ? "text-red-500 fill-red-500"
                                                 : ""
                                         }`}
                                     />
                                     <span className="text-sm font-medium">
-                                        {postData.reactions.length}
+                                        {postData.totalLikes}
+                                    </span>
+                                </button>
+
+                                <button
+                                    onClick={() => handleReaction("DISLIKE")}
+                                    className="flex items-center gap-2 text-gray-600 "
+                                >
+                                    <ThumbsDown
+                                        className={`w-5 h-5 ${
+                                            postData.hasUserDislikedPost
+                                                ? "text-red-500"
+                                                : ""
+                                        }`}
+                                    />
+                                    <span className="text-sm font-medium">
+                                        {postData.totalDislikes}
                                     </span>
                                 </button>
 

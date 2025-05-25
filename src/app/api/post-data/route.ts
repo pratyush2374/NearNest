@@ -53,9 +53,32 @@ export async function GET(request: NextRequest) {
                 status: 404,
             });
         }
+        const [likeReaction, dislikeReaction] = await Promise.all([
+            prisma.reaction.findFirst({
+                where: { userId: token.id, postId: postId, type: "LIKE" },
+            }),
+            prisma.reaction.findFirst({
+                where: { userId: token.id, postId: postId, type: "DISLIKE" },
+            }),
+        ]);
+
+        const hasUserLikedPost = !!likeReaction;
+        const hasUserDislikedPost = !!dislikeReaction;
+        const totalLikes = post.reactions.filter(
+            (reaction) => reaction.type === "LIKE"
+        ).length;
+        const totalDislikes = post.reactions.filter(
+            (reaction) => reaction.type === "DISLIKE"
+        ).length;
 
         return NextResponse.json(
-            new ApiResponse(true, "Post fetched", { ...post }),
+            new ApiResponse(true, "Post fetched", {
+                ...post,
+                hasUserLikedPost,
+                hasUserDislikedPost,
+                totalLikes,
+                totalDislikes,
+            }),
             {
                 status: 200,
             }

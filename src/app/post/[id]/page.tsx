@@ -2,31 +2,31 @@ import { Metadata } from "next";
 import IndividualPost from "./IndividualPost";
 
 export const metadata: Metadata = {
-    title: "Sign In | NearNest - Discover & Share Local Events",
+    title: "Post | NearNest - Discover & Share Local Events",
     metadataBase: new URL("https://nearnest.vercel.app"),
     description:
-        "Sign in to your NearNest account to explore and share local events, meetups, and community gatherings. Stay updated with what’s happening nearby.",
+        "Explore this local post on NearNest. Stay connected with your community by discovering updates, events, and insights shared by people around you.",
     keywords:
-        "NearNest login, sign in NearNest, access NearNest account, NearNest events, local event platform login, community gatherings, discover local meetups",
+        "NearNest post, community post, local updates, neighborhood events, NearNest individual post, community sharing, local platform",
     authors: [
         { name: "Pratyush Sharma", url: "https://pratyush2374.vercel.app" },
     ],
     robots: "index, follow",
 
     openGraph: {
-        title: "Sign In to NearNest | Discover & Share Local Events",
+        title: "Post on NearNest | Discover & Share Local Stories",
         description:
-            "Log in to NearNest and reconnect with your community. Explore and share local events, gatherings, and meetups in your area.",
+            "Read this post on NearNest to stay in the loop with your neighborhood. Discover what's happening nearby and engage with your local community.",
         siteName: "NearNest",
         images: [
             {
                 url: "/icon.svg",
                 width: 1200,
                 height: 630,
-                alt: "Sign In - NearNest Local Events",
+                alt: "Individual Post - NearNest",
             },
         ],
-        type: "website",
+        type: "article",
         locale: "en_US",
     },
 

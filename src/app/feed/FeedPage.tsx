@@ -7,10 +7,19 @@ import { toast } from "sonner";
 import PostData from "@/types/post";
 import LoadingFeed from "./LoadingFeed";
 import CreatePost from "./CreatePost";
+import FilterPosts from "./FilterPosts";
+
+type PostType =
+    | "LOCAL_UPDATE"
+    | "PLACE_RECOMMENDATION"
+    | "HELP"
+    | "EVENT_ANNOUNCEMENT"
+    | "ALL";
 
 const FeedPage: React.FC = () => {
     const [districtState, setDistrictState] = useState("");
     const [posts, setPosts] = useState<PostData[]>([]);
+    const [allPosts, setAllPosts] = useState<PostData[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +44,7 @@ const FeedPage: React.FC = () => {
                         console.log(res.data.data);
                         setDistrictState(districtState);
                         setPosts(posts);
+                        setAllPosts(posts);
                         localStorage.setItem("districtState", districtState);
                         localStorage.setItem(
                             "location",
@@ -63,6 +73,13 @@ const FeedPage: React.FC = () => {
         fetchPostsWithLocation();
     }, []);
 
+    const filterPost = (postType: PostType) => {
+        if (postType === "ALL") return setPosts(allPosts);
+        setPosts(allPosts)
+        const filteredPosts = allPosts.filter((post) => post.type === postType);
+        setPosts(filteredPosts);
+    };
+
     if (error) {
         return (
             <div className="max-w-2xl mx-auto p-6">
@@ -80,6 +97,7 @@ const FeedPage: React.FC = () => {
             <FeedNavbar districtState={districtState} />
             <div className="pt-16">
                 <CreatePost />
+                <FilterPosts filterPost={filterPost} />
                 <Feed posts={posts} />
             </div>
         </>

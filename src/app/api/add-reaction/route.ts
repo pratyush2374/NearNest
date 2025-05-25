@@ -16,13 +16,9 @@ export async function POST(request: NextRequest) {
             );
         }
         const userId = token.id;
-        const { postId, reactionType } = await request.json();
+        const { postId, type } = await request.json(); // Changed from reactionType to type
 
-        if (
-            !postId ||
-            !reactionType ||
-            !["LIKE", "DISLIKE"].includes(reactionType)
-        ) {
+        if (!postId || !type || !["LIKE", "DISLIKE"].includes(type)) {
             return NextResponse.json(
                 new ApiResponse(
                     false,
@@ -32,30 +28,60 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        await prisma.reaction.deleteMany({
+        // Check if user already has a reaction on this post
+        const existingReaction = await prisma.reaction.findFirst({
             where: {
                 userId,
                 postId,
             },
         });
 
-        const reaction = await prisma.reaction.create({
-            data: {
-                user: {
-                    connect: { id: userId },
-                },
-                post: {
-                    connect: { id: postId },
-                },
-                type: reactionType as ReactionType,
-            },
-        });
+        let result;
+        let message;
 
-        return NextResponse.json(new ApiResponse(true, "Reaction added", reaction), {
+        if (existingReaction) {
+            if (existingReaction.type === type) {
+                // User is toggling off the same reaction - remove it
+                await prisma.reaction.delete({
+                    where: {
+                        id: existingReaction.id,
+                    },
+                });
+                result = null;
+                message = `${type.toLowerCase()} removed`;
+            } else {
+                // User is switching reaction type - update it
+                result = await prisma.reaction.update({
+                    where: {
+                        id: existingReaction.id,
+                    },
+                    data: {
+                        type: type as ReactionType,
+                    },
+                });
+                message = `Reaction updated to ${type.toLowerCase()}`;
+            }
+        } else {
+            // User is adding a new reaction
+            result = await prisma.reaction.create({
+                data: {
+                    user: {
+                        connect: { id: userId },
+                    },
+                    post: {
+                        connect: { id: postId },
+                    },
+                    type: type as ReactionType,
+                },
+            });
+            message = `${type.toLowerCase()} added`;
+        }
+
+        return NextResponse.json(new ApiResponse(true, message, result), {
             status: 200,
         });
     } catch (error) {
-        console.error("Error adding reaction", error);
+        console.error("Error handling reaction", error);
         return NextResponse.json(
             new ApiResponse(false, "Something went wrong"),
             { status: 500 }
