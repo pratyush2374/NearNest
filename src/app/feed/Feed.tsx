@@ -1,9 +1,15 @@
 "use client";
 
-
-
-export default function Feed() {
-    
-
-    return <div></div>;
+interface FeedProps {
+    posts : []
 }
+
+const Feed : React.FC = () => {
+  return (
+    <>
+      
+    </>
+  );
+}
+
+export default Feed;

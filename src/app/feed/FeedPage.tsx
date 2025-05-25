@@ -1,63 +1,70 @@
 "use client";
 import axios, { AxiosError } from "axios";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Feed from "./Feed";
 import FeedNavbar from "./FeedNavbar";
 import AddPost from "./AddPost";
+import { toast } from "sonner";
 
 const FeedPage: React.FC = () => {
     const [districtState, setDistrictState] = useState("");
-    const [location, setLocation] = useState<{
-        lat: number;
-        lng: number;
-    } | null>(null);
+    const [posts, setPosts] = useState([]);
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const getAndUpdateLocation = () => {
+        const fetchPostsWithLocation = () => {
             if (!navigator.geolocation) {
                 setError("Geolocation is not supported by your browser.");
+                setIsLoading(false);
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
-                    setLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    });
                     try {
-                        const res = await axios.post("/api/update-location", {
-                            location: `${position.coords.latitude},${position.coords.longitude}`,
+                        const { latitude, longitude } = position.coords;
+
+                        const res = await axios.post("/api/posts", {
+                            location: `${latitude},${longitude}`,
                         });
-                        const disState = res.data.data.districtState;
-                        setDistrictState(disState as string);
-                        localStorage.setItem(
-                            "districtState",
-                            res.data.districtState ?? ""
-                        );
+
+                        const { districtState, posts } = res.data.data;
+
+                        setDistrictState(districtState);
+                        setPosts(posts);
+                        localStorage.setItem("districtState", districtState);
                     } catch (err) {
                         const error = err as AxiosError;
                         console.error(error);
+                        const errorMessage =
+                            (error.response?.data as { message?: string })?.message ||
+                            "Something went wrong";
+                        toast.error(errorMessage);
+                        setError(errorMessage);
+                    } finally {
+                        setIsLoading(false);
                     }
                 },
                 (err) => {
                     setError("Permission denied or error fetching location.");
                     console.error(err);
+                    setIsLoading(false);
                 }
             );
         };
-        getAndUpdateLocation();
+
+        fetchPostsWithLocation();
     }, []);
 
-    if (error) return <p>{error}</p>;
-    if (!location) return <p>Fetching your location...</p>;
+    if (error) return <p className="text-red-500 text-center">{error}</p>;
+    if (isLoading) return <p className="text-center">Fetching your location and posts...</p>;
 
     return (
         <>
             <FeedNavbar districtState={districtState} />
             <AddPost />
-            <Feed />
+            
         </>
     );
 };

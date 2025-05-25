@@ -18,6 +18,7 @@ model User {
   location              String?
   lastLocationUpdatedAt DateTime?
   posts                 Post[]
+  seenPosts             String[]
   isVerified            Boolean    @default(false)
   createdAt             DateTime   @default(now())
   updatedAt             DateTime   @updatedAt
