@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import Feed from "./Feed";
 import FeedNavbar from "./FeedNavbar";
-import AddPost from "./AddPost";
 import { toast } from "sonner";
 
 const FeedPage: React.FC = () => {
@@ -34,12 +33,13 @@ const FeedPage: React.FC = () => {
                         setDistrictState(districtState);
                         setPosts(posts);
                         localStorage.setItem("districtState", districtState);
+                        localStorage.setItem("location", `${latitude},${longitude}`);
                     } catch (err) {
                         const error = err as AxiosError;
                         console.error(error);
                         const errorMessage =
-                            (error.response?.data as { message?: string })?.message ||
-                            "Something went wrong";
+                            (error.response?.data as { message?: string })
+                                ?.message || "Something went wrong";
                         toast.error(errorMessage);
                         setError(errorMessage);
                     } finally {
@@ -58,13 +58,15 @@ const FeedPage: React.FC = () => {
     }, []);
 
     if (error) return <p className="text-red-500 text-center">{error}</p>;
-    if (isLoading) return <p className="text-center">Fetching your location and posts...</p>;
+    if (isLoading)
+        return (
+            <p className="text-center">Fetching your location and posts...</p>
+        );
 
     return (
         <>
             <FeedNavbar districtState={districtState} />
-            <AddPost />
-            
+            <Feed />
         </>
     );
 };
