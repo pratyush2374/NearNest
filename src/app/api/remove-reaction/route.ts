@@ -15,47 +15,33 @@ export async function POST(request: NextRequest) {
             );
         }
         const userId = token.id;
-        const { postId, comment } = await request.json();
+        const { postId } = await request.json();
 
-        if (!postId || !comment) {
+        if (!postId) {
             return NextResponse.json(
-                new ApiResponse(false, "Post ID and comment are required"),
+                new ApiResponse(
+                    false,
+                    "Post ID and reaction type are required"
+                ),
                 { status: 400 }
             );
         }
 
-        const newComment = await prisma.comment.create({
-            data: {
-                user: {
-                    connect: {
-                        id: userId,
-                    },
-                },
-                post: {
-                    connect: {
-                        id: postId,
-                    },
-                },
-                content: comment,
-            },
-            include: {
-                user: {
-                    select: {
-                        fullName: true,
-                        username: true,
-                    },
-                },
+        await prisma.reaction.deleteMany({
+            where: {
+                userId,
+                postId,
             },
         });
 
         return NextResponse.json(
-            new ApiResponse(true, "Comment added", { ...newComment }),
+            new ApiResponse(true, "Reaction removed"),
             {
                 status: 200,
             }
         );
     } catch (error) {
-        console.error("Error adding comment", error);
+        console.error("Error removing reaction", error);
         return NextResponse.json(
             new ApiResponse(false, "Something went wrong"),
             { status: 500 }

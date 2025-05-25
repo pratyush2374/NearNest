@@ -28,6 +28,12 @@ export async function GET(request: NextRequest) {
                 id: postId,
             },
             include: {
+                user: {
+                    select: {
+                        fullName: true,
+                        username: true,
+                    },
+                },
                 reactions: true,
                 comments: {
                     include: {
@@ -48,9 +54,12 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        return NextResponse.json(new ApiResponse(true, "Post fetched", post), {
-            status: 200,
-        });
+        return NextResponse.json(
+            new ApiResponse(true, "Post fetched", { ...post }),
+            {
+                status: 200,
+            }
+        );
     } catch (error) {
         console.error("Error fetching post:", error);
         return NextResponse.json(
