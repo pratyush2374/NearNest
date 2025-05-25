@@ -34,16 +34,24 @@ export async function POST(request: NextRequest) {
 
         const content = formData.get("content") as string;
         const type = formData.get("type") as PostType;
-        const location = formData.get("location") as string;
+        let location = formData.get("location") as string;
         const images = formData.getAll("images") as File[];
 
-        if (!content || !type || !location || !Array.isArray(images)) {
+        if (!content || !type || !Array.isArray(images)) {
             return NextResponse.json(
                 new ApiResponse(false, "Invalid payload"),
                 { status: 400 }
             );
         }
 
+        if(!location) {
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: userId,
+                },
+            })
+            location = user?.location || "";
+        }
         const contentWithoutSpaces = content.replace(/\s/g, "").length;
         if (contentWithoutSpaces > 280) {
             return NextResponse.json(

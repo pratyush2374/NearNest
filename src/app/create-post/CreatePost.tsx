@@ -14,6 +14,7 @@ import {
     LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 // Type definitions
 interface PostFormData {
@@ -49,6 +50,7 @@ const CreatePost: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
+    const router = useRouter()
 
     const {
         register,
@@ -133,10 +135,11 @@ const CreatePost: React.FC = () => {
 
             setSubmitStatus({
                 type: "success",
-                message: "Post created successfully!",
+                message: "Post created successfully! Redirecting...",
             });
             reset();
             setSelectedFiles([]);
+            router.push("/feed");
         } catch (error) {
             const axiosError = error as AxiosError<ApiErrorResponse>;
             const errorMessage =

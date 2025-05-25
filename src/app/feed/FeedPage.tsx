@@ -29,7 +29,7 @@ const FeedPage: React.FC = () => {
                         });
 
                         const { districtState, posts } = res.data.data;
-
+                        console.log(res.data.data);
                         setDistrictState(districtState);
                         setPosts(posts);
                         localStorage.setItem("districtState", districtState);
