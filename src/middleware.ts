@@ -17,7 +17,8 @@ export async function middleware(request: NextRequest) {
         pathname === "/sign-in" ||
         pathname === "/sign-up" ||
         pathname.startsWith("/reset-password") ||
-        pathname.startsWith("/verify-email");
+        pathname.startsWith("/verify-email") ||
+        pathname.startsWith("/verify-your-email");
 
     // Protected routes that require authentication
     const isProtectedRoute =
@@ -31,7 +32,8 @@ export async function middleware(request: NextRequest) {
         token &&
         isPublicRoute &&
         !pathname.startsWith("/verify-email") &&
-        !pathname.startsWith("/reset-password")
+        !pathname.startsWith("/reset-password") &&
+        !pathname.startsWith("/verify-your-email")
     ) {
         return NextResponse.redirect(new URL("/feed", request.url));
     }

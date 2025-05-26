@@ -45,7 +45,7 @@ const SignUp: React.FC = () => {
             });
 
             if (res?.ok) {
-                router.push("/feed");
+                router.push("/verify-your-email");
             } else {
                 router.push("/sign-in");
             }
